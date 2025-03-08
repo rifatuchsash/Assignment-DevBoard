@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Assignment DevBoard</title>
+</head>
+<body class="bg-gray-100 p-4 transition-all" id="body">
+    <!-- Navbar -->
+    <div class="flex justify-between items-center bg-white p-4 shadow-md rounded-lg">
+        <div class="flex items-center gap-2">
+            <img src="assets/logo.png">
+            <h1 class="text-xl font-bold">DevBoard</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="flex items-center gap-2 bg-gray-100 text-black px-4 py-2 rounded-lg">
+                <img src="assets/checkbox.png"><span id="taskCount">23</span>
+            </button>
+            <button id="themeToggle" class="w-10 h-10 bg-gray-300 rounded-full">
+                <img src="assets/theme-btn.png">
+            </button>
+        </div>
+    </div>
+    
+    
+    <div class="grid grid-cols-4 gap-4 my-4">
+        <div class="col-span-3 flex flex-col gap-4">
+            <!-- Top Cards -->
+            <div class="grid grid-cols-4 gap-4">
+                <div class="bg-white p-4 shadow-md rounded-lg flex items-center gap-4 h-24 col-span-1">
+                    <img src="assets/checkbox.png">
+                     <span class="text-lg font-semibold">Task Assigned</span>
+                    <span id="taskAssigned" class="text-xl font-bold">6</span>
+                </div>
+                <div class="bg-gradient-to-r from-blue-500 to-purple-500 p-6 shadow-md rounded-lg text-white text-center h-24 flex items-center justify-center relative col-span-2">
+                    <img src="assets/board.png" class="absolute left-4 w-10 h-10"> 
+                    <p class="text-lg font-bold">Discover Something New Today!</p>
+                </div>
+                <div class="bg-white p-4 shadow-md rounded-lg flex items-center justify-center gap-4 h-24 col-span-1">
+                    <img src="assets/calender.png">
+                     <span id="currentDate" class="text-lg font-semibold"></span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4" id="taskContainer"></div>
+        </div>
+        <!-- Activity Log -->
+        <div class="bg-white p-4 shadow-md rounded-lg h-full justify-between">
+            <div class="flex justify-center"> 
+              <img src="assets/activity.png" class="h-6 w-6 mr-2"> 
+              <h2 class="font-bold">Activity Log</h2>
+            </div>
+            <button id="clearHistory" class="bg-red-500 text-white px-3 py-1 mt-2 rounded w-full text-sm">Clear History</button>
+            <div id="activityLog" class="text-sm text-gray-600 mt-2"></div>
+        </div>
+    </div>
+    
+    <script>
+        const tasks = [
+            { project: "ShopEase", title: "Fix Mobile Button Issue", details: "Debug using Chrome DevTools, check for overlap...", deadline: "21 March 2025" },
+            { project: "CloudSync", title: "Add Dark Mode", details: "Store user preference in localStorage, update CSS...", deadline: "21 March 2025" },
+            { project: "SwiftPay", title: "Optimize Home Page", details: "Debug using Chrome DevTools, check for overlap...", deadline: "21 March 2025" },
+            { project: "Meta", title: "Add new emoji ✌️", details: "Debug using Chrome DevTools, check for overlap...", deadline: "21 March 2025" },
+            { project: "Google LLC", title: "Integrate OpenAI API", details: "Debug using Chrome DevTools, check for overlap...", deadline: "21 March 2025" },
+            { project: "Glassdoor", title: "Improve Job Searching", details: "Debug using Chrome DevTools, check for overlap...", deadline: "21 March 2025" }
+        ];
+        
+        function loadTasks() {
+            const taskContainer = document.getElementById("taskContainer");
+            taskContainer.innerHTML = "";
+            tasks.forEach((task, index) => {
+                const taskCard = document.createElement("div");
+                taskCard.className = "bg-white p-4 shadow-md rounded-lg";
+                taskCard.innerHTML = `
+                    <span class="text-xs bg-gray-200 px-2 py-1 rounded">${task.project}</span>
+                    <h3 class="font-bold mt-2">${task.title}</h3>
+                    <p class="text-sm text-gray-600">${task.details}</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs text-gray-500">Deadline: <b>${task.deadline}</b></span>
+                        <button class="bg-blue-500 text-white px-3 py-1 text-xs rounded complete-btn" data-index="${index}">Completed</button>
+                    </div>
+                `;
+                taskContainer.appendChild(taskCard);
+            });
+            document.getElementById("taskCount").innerText = tasks.length;
+        }
+
+        document.getElementById("themeToggle").addEventListener("click", () => {
+            const colors = ["bg-gray-100", "bg-blue-100", "bg-green-100", "bg-red-100", "bg-yellow-100"];
+            document.body.className = colors[Math.floor(Math.random() * colors.length)] + " p-4 transition-all";
+        });
+
+        document.getElementById("clearHistory").addEventListener("click", () => {
+            document.getElementById("activityLog").innerHTML = "History Cleared";
+        });
+
+        document.getElementById("currentDate").innerText = new Date().toDateString();
+
+        document.getElementById("taskContainer").addEventListener("click", (e) => {
+            if (e.target.classList.contains("complete-btn")) {
+                e.target.disabled = true;
+                e.target.classList.add("bg-gray-400", "cursor-not-allowed");
+                e.target.innerText = "Completed";
+                alert("Board updated successfully");
+                
+                let taskCount = document.getElementById("taskCount");
+                let taskAssigned = document.getElementById("taskAssigned");
+                taskCount.innerText = parseInt(taskCount.innerText) + 1;
+                taskAssigned.innerText = parseInt(taskAssigned.innerText) - 1;
+                
+                const activityLog = document.getElementById("activityLog");
+                const taskTitle = e.target.closest("div").querySelector("h3").innerText;
+                activityLog.innerHTML += `<p>✔ ${taskTitle}</p>`;
+                
+            }
+        });
+
+        loadTasks();
+    </script>
+</body>
+</html>
